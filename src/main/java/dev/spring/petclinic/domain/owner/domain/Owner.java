@@ -31,25 +31,18 @@ public class Owner {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotBlank(message = "First name is required")
 	@Column(name = "first_name", length = 30)
 	private String firstName;
 
-
-	@NotBlank(message = "First name is required")
 	@Column(name = "last_name", length = 30)
 	private String lastName;
 
-
-	@NotBlank(message = "Address is required")
 	@Column(length = 255)
 	private String address;
 
-	@NotBlank(message = "City is required")
 	@Column(length = 80)
 	private String city;
 
-	@NotBlank(message = "Telephone is required")
 	@Column(length = 20)
 	private String telephone;
 
@@ -66,6 +59,7 @@ public class Owner {
 		this.city = city;
 		this.telephone = telephone;
 	}
+
 
 	// setter 메서드를 사용하지 않고, 도메인 로직(Owner 엔티티)에서 변경 가능하도록 메서드를 추가
 	public void updateOwnerInfo(String firstName, String lastName, String address, String city, String telephone) {
