@@ -19,12 +19,14 @@
   <tbody>
   <tr th:each="owner : ${listOwners}">
     <td>
-      <a th:href="@{/owners/__${owner.id}__}" th:text="${owner.firstName + ' ' + owner.lastName}"/></a>
+        <a th:href="@{/owners/{id}(id=${owner.id})}" th:text="${owner.firstName + ' ' + owner.lastName}"></a>
+
     </td>
     <td th:text="${owner.address}"/>
     <td th:text="${owner.city}"/>
     <td th:text="${owner.telephone}"/>
-    <td><span th:text="${#strings.listJoin(owner.pets, ', ')}"/></td>
+    <td><span th:if="${owner.pets != null}" th:text="${#strings.listJoin(owner.pets.![name], ', ')}"></span>
+        <span th:unless="${owner.pets != null}">No Pets</span></td>
   </tr>
   </tbody>
 </table>
