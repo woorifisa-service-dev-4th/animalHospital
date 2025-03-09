@@ -25,9 +25,25 @@ public class OwnerController {
 
 	@GetMapping("/new")
 	public String showCreateOwnerForm(Model model) {
-		//model.addAttribute("owner", new OwnerResDto()); // 빈 Owner 객체 전달
-		model.addAttribute("owner", new Owner()); // 빈 Owner 객체 전달
+		model.addAttribute("owner", new OwnerResDto()); // 빈 Owner 객체 전달
 		return "owners/createOrUpdateOwnerForm"; // 폼 페이지 반환
+	}
+
+	@PostMapping("/new")
+	public String createOwner(@ModelAttribute @Valid OwnerResDto owner, BindingResult result, Model model) {
+		if (result.hasErrors()) {
+			model.addAttribute("owner", owner);
+			return "owners/createOrUpdateOwnerForm"; // 유효성 검사 실패 시 다시 폼으로 이동
+		}
+		Owner ownerEntity = Owner.builder()
+			.address(owner.getAddress())
+			.city(owner.getCity())
+			.firstName(owner.getFirstName())
+			.lastName(owner.getLastName())
+			.telephone(owner.getTelephone())
+			.build();
+		Owner savedOwner = ownerService.save(ownerEntity);
+		return "redirect:/owners/" + savedOwner.getId(); // 저장 후 상세 페이지로 리다이렉트
 	}
 
 	@GetMapping("/find")
@@ -66,23 +82,6 @@ public class OwnerController {
 		OwnerResDto owner = ownerService.getOwnerById(id);
 		model.addAttribute("owner", owner);
 		return "owners/ownerDetails";
-	}
-
-	@PostMapping("/new")
-	public String createOwner(@ModelAttribute @Valid OwnerResDto owner, BindingResult result, Model model) {
-		if (result.hasErrors()) {
-			model.addAttribute("owner", owner);
-			return "owners/createOrUpdateOwnerForm"; // 유효성 검사 실패 시 다시 폼으로 이동
-		}
-		Owner ownerEntity = Owner.builder()
-			.address(owner.getAddress())
-			.city(owner.getCity())
-			.firstName(owner.getFirstName())
-			.lastName(owner.getLastName())
-			.telephone(owner.getTelephone())
-			.build();
-		Owner savedOwner = ownerService.save(ownerEntity);
-		return "redirect:/owners/" + savedOwner.getId(); // 저장 후 상세 페이지로 리다이렉트
 	}
 	@PutMapping("/{id}/edit")
 	public String updateOwner(@PathVariable Long id, @ModelAttribute @Valid Owner updatedOwner) {
