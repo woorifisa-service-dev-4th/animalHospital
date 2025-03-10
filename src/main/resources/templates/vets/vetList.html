@@ -14,14 +14,16 @@
     <th>Specialties</th>
   </tr>
   </thead>
-  <tbody>
-  <tr th:each="vet : ${listVets}">
-    <td th:text="${vet.firstName + ' ' + vet.lastName}"></td>
-    <td><span th:each="specialty : ${vet.specialties}"
-              th:text="${specialty.name + ' '}"/> <span
-      th:if="${vet.nrOfSpecialties == 0}">none</span></td>
-  </tr>
-  </tbody>
+    <tbody>
+    <tr th:each="vet : ${listVets}">
+        <td th:text="${vet.name}"></td>
+        <td>
+      <span th:each="specialty : ${vet.specialties}"
+            th:text="${specialty + ' '}"></span>
+            <span th:if="${#lists.isEmpty(vet.specialties)}">none</span>
+        </td>
+    </tr>
+    </tbody>
 </table>
 
 <div th:if="${totalPages > 1}">
