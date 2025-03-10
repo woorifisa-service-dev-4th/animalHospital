@@ -22,6 +22,7 @@ import javax.persistence.Id;
 	@Index(name = "idx_pet_name", columnList = "name") // ✅ name 인덱스 추가
 })//기본적으로 @Entity가 선언된 클래스의 이름이 테이블명으로 자동 매핑되지만, 이를 직접 지정하고 싶을 때 사용.
 @Getter //클래스의 모든 필드에 대한 Getter 메서드를 자동 생성하는 Lombok 어노테이션.
+@Setter
 @NoArgsConstructor //기본 생성자(파라미터가 없는 생성자)를 자동으로 생성하는 Lombok 어노테이션.
 public class Pet {
 
@@ -35,8 +36,6 @@ public class Pet {
 	@Column(name = "birth_date")
 	private LocalDate birthDate;
 
-
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "type_id", nullable = false)
 	private PetType type;
@@ -44,6 +43,9 @@ public class Pet {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "owner_id")
 	private Owner owner;
+	public void setOwner(Owner owner) {
+		this.owner = owner;
+	}
 
 
 	@Builder
@@ -55,4 +57,3 @@ public class Pet {
 	}
 
 }
-
