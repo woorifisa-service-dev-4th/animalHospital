@@ -32,13 +32,15 @@ public class PetService {
 
 	public Pet convertPetEntity(PetDto petDto) {
 		PetType petType = petTypeService.findByName(petDto.getType())
-				.orElseGet(() -> PetType.builder().name(petDto.getType()).build()); // 없는 경우 새로 생성
+				.orElseThrow(() -> new RuntimeException("Invalid Pet Type: " + petDto.getType()));
+
 		return Pet.builder()
 				.name(petDto.getName())
-				.type(petType) // :흰색_확인_표시: 변환된 PetType 객체 사용
+				.type(petType) // PetType 설정
 				.birthDate(petDto.getBirthDate())
 				.build();
 	}
+
 	public void save(Pet pet) {
 		petRepository.save(pet);
 	}

@@ -25,4 +25,10 @@ public class PetTypeService {
     public Optional<PetType> findByName(String name) {
         return petTypeRepository.findByName(name);
     }
+
+    @Transactional(readOnly = true)
+    public Optional<PetType> findById(Long id) {
+        return petTypeRepository.findById(id);
+    }
+
 }
