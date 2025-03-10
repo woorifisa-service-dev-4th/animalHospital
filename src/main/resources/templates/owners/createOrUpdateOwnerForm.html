@@ -10,15 +10,31 @@
       method="post"
       class="form-horizontal" id="add-owner-form">
 
-  <!-- ✅ PUT 요청을 위한 hidden input 추가 -->
-  <input type="hidden" name="_method" th:value="${owner.id != null} ? 'PUT' : 'POST'"/>
-
   <div class="form-group has-feedback">
-    <input th:replace="~{fragments/inputField :: input ('First Name', 'firstName', 'text')}" />
-    <input th:replace="~{fragments/inputField :: input ('Last Name', 'lastName', 'text')}" />
-    <input th:replace="~{fragments/inputField :: input ('Address', 'address', 'text')}" />
-    <input th:replace="~{fragments/inputField :: input ('City', 'city', 'text')}" />
-    <input th:replace="~{fragments/inputField :: input ('Telephone', 'telephone', 'text')}" />
+    <label for="firstName"></label>
+    <input th:replace="~{fragments/inputField :: input ('First Name', 'firstName', 'text')}"
+           th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'"/>
+    <span class="text-danger" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
+
+    <label for="lastName"></label>
+    <input th:replace="~{fragments/inputField :: input ('Last Name', 'lastName', 'text')}"
+           th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'"/>
+    <span class="text-danger" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
+
+    <label for="address"></label>
+    <input th:replace="~{fragments/inputField :: input ('Address', 'address', 'text')}"
+           th:classappend="${#fields.hasErrors('address')} ? 'is-invalid'"/>
+    <span class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
+
+    <label for="city"></label>
+    <input th:replace="~{fragments/inputField :: input ('City', 'city', 'text')}"
+           th:classappend="${#fields.hasErrors('city')} ? 'is-invalid'"/>
+    <span class="text-danger" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></span>
+
+    <label for="telephone"></label>
+    <input th:replace="~{fragments/inputField :: input ('Telephone', 'telephone', 'text')}"
+           th:classappend="${#fields.hasErrors('telephone')} ? 'is-invalid'"/>
+    <span class="text-danger" th:if="${#fields.hasErrors('telephone')}" th:errors="*{telephone}"></span>
   </div>
 
   <div class="form-group">

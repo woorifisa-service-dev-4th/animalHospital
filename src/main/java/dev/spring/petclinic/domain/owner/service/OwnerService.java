@@ -33,7 +33,7 @@ public class OwnerService {
 	}
 
 	// 기존 Owner 수정
-	public void updateOwner(Long id, Owner updatedOwner) {
+	public void updateOwner(Long id, OwnerResDto updatedOwner) {
 		ownerRepository.findById(id).ifPresent(owner -> {
 			owner.updateOwnerInfo(
 				updatedOwner.getFirstName(),

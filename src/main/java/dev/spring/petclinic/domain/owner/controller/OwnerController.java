@@ -48,7 +48,7 @@ public class OwnerController {
 
 	@GetMapping("/find")
 	public String showFindOwnersForm(Model model) {
-		model.addAttribute("owner", new Owner());  // 빈 Owner 객체 전달
+		model.addAttribute("owner", new OwnerResDto());  // 빈 Owner 객체 전달
 		return "owners/findOwners"; // Thymeleaf 뷰 파일 경로
 	}
 	@GetMapping
@@ -57,7 +57,7 @@ public class OwnerController {
 		Model model) {
 
 		if (!model.containsAttribute("owner")) {
-			model.addAttribute("owner", new Owner());
+			model.addAttribute("owner", new OwnerResDto());
 		}
 
 		int pageSize = 5;
@@ -83,8 +83,22 @@ public class OwnerController {
 		model.addAttribute("owner", owner);
 		return "owners/ownerDetails";
 	}
-	@PutMapping("/{id}/edit")
-	public String updateOwner(@PathVariable Long id, @ModelAttribute @Valid Owner updatedOwner) {
+
+
+	@GetMapping("/{id}/edit")
+	public String showUpdateOwnerForm(@PathVariable Long id, Model model) {
+		OwnerResDto owner = ownerService.getOwnerById(id);
+		model.addAttribute("owner", owner);
+		return "owners/createOrUpdateOwnerForm";
+	}
+
+
+	@PostMapping("/{id}/edit")
+	public String updateOwner(@PathVariable Long id, @ModelAttribute @Valid OwnerResDto updatedOwner, BindingResult result, Model model) {
+		if (result.hasErrors()) {
+			model.addAttribute("owner", updatedOwner);
+			return "owners/createOrUpdateOwnerForm"; // 유효성 검사 실패 시 다시 폼으로 이동
+		}
 		ownerService.updateOwner(id, updatedOwner);
 		return "redirect:/owners/" + id;
 	}
