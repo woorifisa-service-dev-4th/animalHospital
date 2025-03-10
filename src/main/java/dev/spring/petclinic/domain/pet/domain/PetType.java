@@ -27,5 +27,11 @@ public class PetType {
 	public PetType(String name) {
 		this.name = name;
 	}
+
+	@Override
+	public String toString() {
+		return this.name; // PetType의 name 필드를 반환
+	}
+
 }
 

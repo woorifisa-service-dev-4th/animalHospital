@@ -2,6 +2,8 @@ package dev.spring.petclinic.domain.pet.service;
 
 import java.util.List;
 
+import dev.spring.petclinic.domain.pet.domain.PetType;
+import dev.spring.petclinic.domain.pet.dto.PetDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PetService {
 	private final PetRepository petRepository;
+	private final PetTypeService petTypeService;
+
 
 	@Transactional(readOnly = true)
 	public List<Pet> getPetsByOwner(Owner owner) {
@@ -26,6 +30,15 @@ public class PetService {
 		return petRepository.findById(id).orElseThrow(() -> new RuntimeException("Pet not found"));
 	}
 
+	public Pet convertPetEntity(PetDto petDto) {
+		PetType petType = petTypeService.findByName(petDto.getType())
+				.orElseGet(() -> PetType.builder().name(petDto.getType()).build()); // 없는 경우 새로 생성
+		return Pet.builder()
+				.name(petDto.getName())
+				.type(petType) // :흰색_확인_표시: 변환된 PetType 객체 사용
+				.birthDate(petDto.getBirthDate())
+				.build();
+	}
 	public void save(Pet pet) {
 		petRepository.save(pet);
 	}

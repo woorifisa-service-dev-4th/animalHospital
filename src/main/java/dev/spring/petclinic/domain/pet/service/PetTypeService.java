@@ -1,6 +1,7 @@
 package dev.spring.petclinic.domain.pet.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,5 +19,10 @@ public class PetTypeService {
     @Transactional(readOnly = true)
     public List<PetType> findAll() {
         return petTypeRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<PetType> findByName(String name) {
+        return petTypeRepository.findByName(name);
     }
 }

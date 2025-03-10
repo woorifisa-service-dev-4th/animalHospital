@@ -4,6 +4,7 @@ import dev.spring.petclinic.domain.owner.domain.Owner;
 import dev.spring.petclinic.domain.owner.service.OwnerService;
 import dev.spring.petclinic.domain.pet.domain.Pet;
 import dev.spring.petclinic.domain.pet.domain.PetType;
+import dev.spring.petclinic.domain.pet.dto.PetDto;
 import dev.spring.petclinic.domain.pet.service.PetService;
 import dev.spring.petclinic.domain.pet.service.PetTypeService;
 import org.springframework.stereotype.Controller;
@@ -39,18 +40,18 @@ public class PetController {
     public String initCreationForm(@PathVariable("ownerId") Long ownerId, Model model) {
         Owner owner = ownerService.findById(ownerId)
                 .orElseThrow(() -> new RuntimeException("Owner not found"));
-        Pet pet = new Pet();
+        PetDto pet = new PetDto();
         pet.setOwner(owner);
         model.addAttribute("pet", pet);
         model.addAttribute("owner", owner);
-        model.addAttribute("new", true);
+        model.addAttribute("isNew", true);
         return "pets/createOrUpdatePetForm";
     }
 
     // Add New Pet 저장 처리
     @PostMapping("/new")
     public String processCreationForm(@PathVariable("ownerId") Long ownerId,
-                                      @ModelAttribute("pet") @Valid Pet pet,
+                                      @ModelAttribute("pet") @Valid PetDto pet,
                                       BindingResult result,
                                       Model model) {
         if (result.hasErrors()) {
@@ -62,8 +63,11 @@ public class PetController {
 
         Owner owner = ownerService.findById(ownerId)
                 .orElseThrow(() -> new RuntimeException("Owner not found"));
-        pet.setOwner(owner);
-        petService.save(pet);
+        Pet petEnity = petService.convertPetEntity(pet);
+        petEnity.setOwner(owner);
+
+
+        petService.save(petEnity);
         return "redirect:/owners/" + ownerId;
     }
 
