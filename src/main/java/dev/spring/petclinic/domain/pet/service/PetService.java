@@ -21,4 +21,12 @@ public class PetService {
 		return petRepository.findByOwner(owner);
 	}
 
+	@Transactional(readOnly = true)
+	public Pet findById(Long id) {
+		return petRepository.findById(id).orElseThrow(() -> new RuntimeException("Pet not found"));
+	}
+
+	public void save(Pet pet) {
+		petRepository.save(pet);
+	}
 }
