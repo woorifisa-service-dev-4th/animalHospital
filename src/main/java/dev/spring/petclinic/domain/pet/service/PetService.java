@@ -41,6 +41,7 @@ public class PetService {
 				.build();
 	}
 
+	@Transactional
 	public void save(Pet pet) {
 		petRepository.save(pet);
 	}

@@ -41,7 +41,7 @@ public class PetController {
         Owner owner = ownerService.findById(ownerId)
                 .orElseThrow(() -> new RuntimeException("Owner not found"));
         PetDto pet = new PetDto();
-        pet.setOwner(owner);
+
         model.addAttribute("pet", pet);
         model.addAttribute("owner", owner);
         model.addAttribute("isNew", true);
@@ -76,16 +76,15 @@ public class PetController {
                                  @PathVariable("petId") Long petId,
                                  Model model) {
         try {
-            // Owner와 Pet 데이터를 조회
             Owner owner = ownerService.findById(ownerId)
                     .orElseThrow(() -> new RuntimeException("Owner not found"));
             Pet pet = petService.findById(petId);
 
             PetDto petDto = PetDto.from(pet);
+            petDto.setOwner(owner); // ✅ owner 정보 추가
 
-            // 모델에 필요한 데이터 추가
             model.addAttribute("pet", petDto);
-            model.addAttribute("owner", owner);
+            model.addAttribute("owner", owner); // ✅ owner 추가
 
             model.addAttribute("types", petTypeService.findAll());
             model.addAttribute("isNew", false);
@@ -94,9 +93,10 @@ public class PetController {
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("errorMessage", e.getMessage());
-            return "error"; // 에러 페이지 반환
+            return "error";
         }
     }
+
 
     @PostMapping("/{petId}/edit")
     public String processUpdateForm(@PathVariable("ownerId") Long ownerId,
@@ -115,12 +115,19 @@ public class PetController {
             Owner owner = ownerService.findById(ownerId)
                     .orElseThrow(() -> new RuntimeException("Owner not found"));
             Pet existingPet = petService.findById(petId);
-
-            // Pet 업데이트 로직
+            model.addAttribute("owner", owner);
+            System.out.println(petId);
+            existingPet.setId(petId);
             existingPet.setName(petDto.getName());
+            //System.out.println(petDto.getName());
             existingPet.setBirthDate(petDto.getBirthDate());
-
-            // PetType ID로 조회
+            existingPet.setOwner(owner);
+            System.out.println("dkdkdk");
+            System.out.println(petDto.getType());
+            PetType petTypeByName = petTypeService.findByName(petDto.getType())
+                    .orElseThrow(() -> new RuntimeException("Invalid Pet Type: " + petDto.getType()));
+            existingPet.setType(petTypeByName);
+            /*
             try {
                 Long typeId = Long.parseLong(petDto.getType());
                 PetType petType = petTypeService.findById(typeId)
@@ -131,15 +138,17 @@ public class PetController {
                 return "pets/createOrUpdatePetForm";
             }
 
-            existingPet.setOwner(owner);
+             */
 
-            petService.save(existingPet); // 업데이트된 Pet 저장
-
+            System.out.println("durl)");
+           System.out.println(existingPet.getId());
+            petService.save(existingPet);
             return "redirect:/owners/" + ownerId;
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("errorMessage", e.getMessage());
-            return "error"; // 에러 페이지 반환
+            return "error";
         }
     }
+
 }

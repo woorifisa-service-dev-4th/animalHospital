@@ -9,11 +9,13 @@
 </h2>
 <form th:object="${pet}" class="form-horizontal" method="post">
   <input type="hidden" name="id" th:value="*{id}" />
+  <input type="hidden" name="ownerId" th:value="${owner?.id}" />
   <div class="form-group has-feedback">
     <div class="form-group">
       <label class="col-sm-2 control-label">Owner</label>
       <div class="col-sm-10">
-        <span th:text="${owner?.firstName + ' ' + owner?.lastName}" />
+        <span th:if="${owner != null}" th:text="${owner.firstName + ' ' + owner.lastName}"></span>
+        <span th:if="${owner == null}">Unknown Owner</span>
       </div>
     </div>
     <input
