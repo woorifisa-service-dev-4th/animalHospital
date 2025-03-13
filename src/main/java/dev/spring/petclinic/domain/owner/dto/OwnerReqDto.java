@@ -1,13 +1,8 @@
 package dev.spring.petclinic.domain.owner.dto;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
-import dev.spring.petclinic.domain.pet.domain.Pet;
-import dev.spring.petclinic.domain.pet.dto.PetDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,8 +14,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OwnerResDto {
-	private Long id;
+public class OwnerReqDto {
+
 
 	@NotBlank(message = "First name is required")
 	private String firstName;
@@ -42,29 +37,14 @@ public class OwnerResDto {
 	)
 	private String telephone;
 
-	private List<PetDto> pets;
-
-	// OwnerResDto로 변환
-	public static OwnerResDto of(Long id, String firstName, String lastName, String address, String city, String telephone, List<Pet> pets) {
-		return OwnerResDto.builder()
-			.id(id)
+	public static OwnerReqDto of( String firstName, String lastName, String address, String city, String telephone) {
+		return OwnerReqDto.builder()
 			.firstName(firstName)
 			.lastName(lastName)
 			.address(address)
 			.city(city)
 			.telephone(telephone)
-			.pets(pets.stream().map(PetDto::from).collect(Collectors.toList()))
 			.build();
 	}
-
-	public static PetDto from(Pet pet) {
-		return PetDto.builder()
-			.id(pet.getId())
-			.name(pet.getName())
-			.type(pet.getType().getName())
-			.birthDate(pet.getBirthDate())
-			.build();
-	}
-
 
 }

@@ -81,7 +81,7 @@ public class PetController {
             Pet pet = petService.findById(petId);
 
             PetDto petDto = PetDto.from(pet);
-            petDto.setOwner(owner); // ✅ owner 정보 추가
+
 
             model.addAttribute("pet", petDto);
             model.addAttribute("owner", owner); // ✅ owner 추가

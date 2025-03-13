@@ -4,6 +4,7 @@ package dev.spring.petclinic.domain.owner.service;
 import java.util.Optional;
 
 import dev.spring.petclinic.domain.owner.domain.Owner;
+import dev.spring.petclinic.domain.owner.dto.OwnerReqDto;
 import dev.spring.petclinic.domain.owner.dto.OwnerResDto;
 import dev.spring.petclinic.domain.owner.repository.OwnerRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class OwnerService {
 	}
 
 	// Owner 추가
-	public OwnerResDto createOwner(OwnerResDto owner) {
+	public OwnerResDto createOwner(OwnerReqDto owner) {
 		Owner newOwner = Owner.builder()
 			.firstName(owner.getFirstName())
 			.lastName(owner.getLastName())
@@ -51,7 +52,7 @@ public class OwnerService {
 	}
 
 	// 기존 Owner 수정
-	public void updateOwner(Long id, OwnerResDto updatedOwner) {
+	public void updateOwner(Long id, OwnerReqDto updatedOwner) {
 		 ownerRepository.findById(id).ifPresent(owner -> {
 			owner.updateOwnerInfo(
 				updatedOwner.getFirstName(),

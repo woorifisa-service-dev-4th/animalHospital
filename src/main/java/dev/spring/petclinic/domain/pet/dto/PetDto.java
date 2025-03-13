@@ -18,15 +18,14 @@ public class PetDto {
     private String type;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
-    private Owner owner; // ✅ owner 필드 추가
 
-    public static PetDto of(Long id, String name, String type, LocalDate birthDate, Owner owner) {
+
+    public static PetDto of(Long id, String name, String type, LocalDate birthDate) {
         return PetDto.builder()
                 .id(id)
                 .name(name)
                 .type(type)
                 .birthDate(birthDate)
-                .owner(owner) // ✅ owner 추가
                 .build();
     }
 
@@ -36,7 +35,7 @@ public class PetDto {
                 .name(pet.getName())
                 .type(pet.getType().getName())
                 .birthDate(pet.getBirthDate())
-                .owner(pet.getOwner()) // ✅ owner 추가
+
                 .build();
     }
 }

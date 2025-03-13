@@ -14,6 +14,7 @@ import javax.validation.Valid;
 
 import dev.spring.petclinic.domain.owner.domain.Owner;
 import dev.spring.petclinic.domain.owner.dto.CustomPageResponse;
+import dev.spring.petclinic.domain.owner.dto.OwnerReqDto;
 import dev.spring.petclinic.domain.owner.dto.OwnerResDto;
 import dev.spring.petclinic.domain.owner.service.OwnerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,16 +61,18 @@ public class OwnerController {
 		return ResponseEntity.ok(response);
 	}
 
+	 */
+
 	@Operation(summary = "특정 Owner 조회", description = "Owner ID를 입력받아 Owner 정보를 반환합니다.")
 	@GetMapping("/{id}")
 	public ResponseEntity<OwnerResDto> getOwnerById(
 		@Parameter(description = "조회할 Owner의 ID") @PathVariable Long id) {
 		return ResponseEntity.ok(ownerService.getOwnerById(id));
 	}
-*/
+
 	@Operation(summary = "Owner 추가", description = "새로운 Owner를 추가합니다.")
 	@PostMapping
-	public ResponseEntity<OwnerResDto> createOwner(@RequestBody OwnerResDto owner) {
+	public ResponseEntity<OwnerResDto> createOwner(@RequestBody OwnerReqDto owner) {
 		return ResponseEntity.ok(ownerService.createOwner(owner));
 	}
 
@@ -77,11 +80,11 @@ public class OwnerController {
 	@PutMapping("/{id}")
 	public ResponseEntity<OwnerResDto> updateOwner(
 		@Parameter(description = "수정할 Owner의 ID") @PathVariable Long id,
-		@RequestBody OwnerResDto updatedOwner) {
+		@RequestBody OwnerReqDto updatedOwner) {
 		ownerService.updateOwner(id, updatedOwner);
 		Owner updated = ownerService.findOwnerById(id);
 		OwnerResDto response = OwnerResDto.of(
-			updated.getId(),
+			id,
 			updated.getFirstName(),
 			updated.getLastName(),
 			updated.getAddress(),
