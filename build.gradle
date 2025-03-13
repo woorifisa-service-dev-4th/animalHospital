@@ -30,17 +30,18 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// ✅ Spring Boot 2.x와 호환되는 Swagger 버전
+	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
+
 	compileOnly 'org.projectlombok:lombok'
-//	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-//	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	
 	runtimeOnly 'org.webjars:webjars-locator-core'
-  	runtimeOnly "org.webjars.npm:bootstrap:${webjarsBootstrapVersion}"
-  	runtimeOnly "org.webjars.npm:font-awesome:${webjarsFontawesomeVersion}"
+	runtimeOnly "org.webjars.npm:bootstrap:${webjarsBootstrapVersion}"
+	runtimeOnly "org.webjars.npm:font-awesome:${webjarsFontawesomeVersion}"
 }
 
 tasks.named('test') {

@@ -1,9 +1,6 @@
 package dev.spring.petclinic.domain.owner.service;
 
 
-
-
-import java.util.List;
 import java.util.Optional;
 
 import dev.spring.petclinic.domain.owner.domain.Owner;
@@ -32,9 +29,30 @@ public class OwnerService {
 		ownerRepository.deleteById(id);
 	}
 
+	// Owner 추가
+	public OwnerResDto createOwner(OwnerResDto owner) {
+		Owner newOwner = Owner.builder()
+			.firstName(owner.getFirstName())
+			.lastName(owner.getLastName())
+			.address(owner.getAddress())
+			.city(owner.getCity())
+			.telephone(owner.getTelephone())
+			.build();
+		Owner savedOwner = ownerRepository.save(newOwner);
+		return OwnerResDto.of(
+			savedOwner.getId(),
+			savedOwner.getFirstName(),
+			savedOwner.getLastName(),
+			savedOwner.getAddress(),
+			savedOwner.getCity(),
+			savedOwner.getTelephone(),
+			savedOwner.getPets()
+		);
+	}
+
 	// 기존 Owner 수정
 	public void updateOwner(Long id, OwnerResDto updatedOwner) {
-		ownerRepository.findById(id).ifPresent(owner -> {
+		 ownerRepository.findById(id).ifPresent(owner -> {
 			owner.updateOwnerInfo(
 				updatedOwner.getFirstName(),
 				updatedOwner.getLastName(),
@@ -59,6 +77,10 @@ public class OwnerService {
 	}
 
 
+
+	public Owner findOwnerById(Long id) {
+		return ownerRepository.findById(id).orElse(null);
+	}
 	// ID로 Owner 조회
 	@Transactional(readOnly = true)
 	public Optional<Owner> findById(Long id) {
@@ -72,15 +94,33 @@ public class OwnerService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<Owner> findPaginatedAllOwners(int page, int size) {
+	public Page<OwnerResDto> findPaginatedAllOwners(int page, int size) {
 		Pageable pageable = PageRequest.of(page - 1, size);
-		return ownerRepository.findAll(pageable);
+		return ownerRepository.findAll(pageable)
+			.map(owner -> OwnerResDto.of(
+				owner.getId(),
+				owner.getFirstName(),
+				owner.getLastName(),
+				owner.getAddress(),
+				owner.getCity(),
+				owner.getTelephone(),
+				owner.getPets()
+			));
 	}
 
 	@Transactional(readOnly = true)
-	public Page<Owner> findPaginatedByLastName(String lastName, int page, int size) {
+	public Page<OwnerResDto> findPaginatedByLastName(String lastName, int page, int size) {
 		Pageable pageable = PageRequest.of(page - 1, size);
-		return ownerRepository.findByLastNameContainingIgnoreCase(lastName, pageable); // ✅ Pet 정보 포함
+		return ownerRepository.findByLastNameContainingIgnoreCase(lastName, pageable)
+			.map(owner -> OwnerResDto.of(
+				owner.getId(),
+				owner.getFirstName(),
+				owner.getLastName(),
+				owner.getAddress(),
+				owner.getCity(),
+				owner.getTelephone(),
+				owner.getPets()
+			));
 	}
 
 }
