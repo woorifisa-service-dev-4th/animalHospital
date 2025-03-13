@@ -5,8 +5,14 @@ import dev.spring.petclinic.domain.owner.service.OwnerService;
 import dev.spring.petclinic.domain.pet.domain.Pet;
 import dev.spring.petclinic.domain.pet.domain.PetType;
 import dev.spring.petclinic.domain.pet.dto.PetDto;
+import dev.spring.petclinic.domain.pet.dto.PetReqDto;
 import dev.spring.petclinic.domain.pet.service.PetService;
 import dev.spring.petclinic.domain.pet.service.PetTypeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,139 +22,53 @@ import java.util.Collection;
 
 import javax.validation.Valid;
 
-@Controller
-@RequestMapping("owners/{ownerId}/pets")
+
+@RestController
+@RequestMapping("/api/owners/{ownerId}/pets")
+@RequiredArgsConstructor
 public class PetController {
 
     private final PetService petService;
     private final OwnerService ownerService;
     private final PetTypeService petTypeService;
 
-    public PetController(PetService petService, OwnerService ownerService, PetTypeService petTypeService) {
-        this.petService = petService;
-        this.ownerService = ownerService;
-        this.petTypeService = petTypeService;
+    @Operation(summary = "새로운 Pet 생성", description = "특정 Owner에게 새로운 Pet을 추가합니다.")
+    @PostMapping
+    public ResponseEntity<PetDto> createPet(
+        @Parameter(description = "Owner ID") @PathVariable Long ownerId,
+        @Valid @RequestBody PetReqDto petDto) {
+
+        // Owner 존재 여부 확인
+        var owner = ownerService.findById(ownerId)
+            .orElseThrow(() -> new RuntimeException("Owner not found"));
+
+        // Pet 생성
+        Pet newPet = petService.createPet(owner, petDto);
+
+        return ResponseEntity.ok(PetDto.from(newPet));
     }
 
-    @ModelAttribute("types")
-    public Collection<PetType> populatePetTypes() {
-        return petTypeService.findAll();
-    }
+    /**
+     * ✅ 4️⃣ Pet 정보 수정
+     * PUT /api/owners/{ownerId}/pets/{petId}
+     */
+    @Operation(summary = "Pet 정보 수정", description = "특정 Owner의 Pet 정보를 업데이트합니다.")
+    @PutMapping("/{petId}")
+    public ResponseEntity<PetDto> updatePet(
+        @Parameter(description = "Owner ID") @PathVariable Long ownerId,
+        @Parameter(description = "Pet ID") @PathVariable Long petId,
+        @Valid @RequestBody PetReqDto petDto) {
 
-    // Add New Pet 폼 페이지 반환
-    @GetMapping("/new")
-    public String initCreationForm(@PathVariable("ownerId") Long ownerId, Model model) {
-        Owner owner = ownerService.findById(ownerId)
-                .orElseThrow(() -> new RuntimeException("Owner not found"));
-        PetDto pet = new PetDto();
+        // Owner 존재 여부 확인
+        var owner = ownerService.findById(ownerId)
+            .orElseThrow(() -> new RuntimeException("Owner not found"));
 
-        model.addAttribute("pet", pet);
-        model.addAttribute("owner", owner);
-        model.addAttribute("isNew", true);
-        return "pets/createOrUpdatePetForm";
-    }
+        // 기존 Pet 찾기 및 수정
+        Pet updatedPet = petService.updatePet(owner, petId, petDto);
 
-    // Add New Pet 저장 처리
-    @PostMapping("/new")
-    public String processCreationForm(@PathVariable("ownerId") Long ownerId,
-                                      @ModelAttribute("pet") @Valid PetDto pet,
-                                      BindingResult result,
-                                      Model model) {
-        if (result.hasErrors()) {
-            model.addAttribute("types", petTypeService.findAll());
-            model.addAttribute("owner", ownerService.findById(ownerId)
-                    .orElseThrow(() -> new RuntimeException("Owner not found")));
-            return "pets/createOrUpdatePetForm";
-        }
-
-        Owner owner = ownerService.findById(ownerId)
-                .orElseThrow(() -> new RuntimeException("Owner not found"));
-        Pet petEnity = petService.convertPetEntity(pet);
-        petEnity.setOwner(owner);
-
-        petService.save(petEnity);
-        return "redirect:/owners/" + ownerId;
-    }
-
-    // Edit Pet 저장 처리
-    @GetMapping("/{petId}/edit")
-    public String initUpdateForm(@PathVariable("ownerId") Long ownerId,
-                                 @PathVariable("petId") Long petId,
-                                 Model model) {
-        try {
-            Owner owner = ownerService.findById(ownerId)
-                    .orElseThrow(() -> new RuntimeException("Owner not found"));
-            Pet pet = petService.findById(petId);
-
-            PetDto petDto = PetDto.from(pet);
-
-
-            model.addAttribute("pet", petDto);
-            model.addAttribute("owner", owner); // ✅ owner 추가
-
-            model.addAttribute("types", petTypeService.findAll());
-            model.addAttribute("isNew", false);
-
-            return "pets/createOrUpdatePetForm";
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("errorMessage", e.getMessage());
-            return "error";
-        }
+        return ResponseEntity.ok(PetDto.from(updatedPet));
     }
 
 
-    @PostMapping("/{petId}/edit")
-    public String processUpdateForm(@PathVariable("ownerId") Long ownerId,
-                                    @PathVariable("petId") Long petId,
-                                    @ModelAttribute("pet") @Valid PetDto petDto,
-                                    BindingResult result,
-                                    Model model) {
-        if (result.hasErrors()) {
-            model.addAttribute("types", petTypeService.findAll());
-            model.addAttribute("owner", ownerService.findById(ownerId)
-                    .orElseThrow(() -> new RuntimeException("Owner not found")));
-            return "pets/createOrUpdatePetForm";
-        }
-
-        try {
-            Owner owner = ownerService.findById(ownerId)
-                    .orElseThrow(() -> new RuntimeException("Owner not found"));
-            Pet existingPet = petService.findById(petId);
-            model.addAttribute("owner", owner);
-            System.out.println(petId);
-            existingPet.setId(petId);
-            existingPet.setName(petDto.getName());
-            //System.out.println(petDto.getName());
-            existingPet.setBirthDate(petDto.getBirthDate());
-            existingPet.setOwner(owner);
-            System.out.println("dkdkdk");
-            System.out.println(petDto.getType());
-            PetType petTypeByName = petTypeService.findByName(petDto.getType())
-                    .orElseThrow(() -> new RuntimeException("Invalid Pet Type: " + petDto.getType()));
-            existingPet.setType(petTypeByName);
-            /*
-            try {
-                Long typeId = Long.parseLong(petDto.getType());
-                PetType petType = petTypeService.findById(typeId)
-                        .orElseThrow(() -> new RuntimeException("Invalid Pet Type ID: " + typeId));
-                existingPet.setType(petType);
-            } catch (NumberFormatException e) {
-                model.addAttribute("errorMessage", "Invalid Pet Type ID. Please enter a valid number.");
-                return "pets/createOrUpdatePetForm";
-            }
-
-             */
-
-            System.out.println("durl)");
-           System.out.println(existingPet.getId());
-            petService.save(existingPet);
-            return "redirect:/owners/" + ownerId;
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("errorMessage", e.getMessage());
-            return "error";
-        }
-    }
 
 }
