@@ -2,15 +2,7 @@ package dev.spring.petclinic.domain.owner.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
-
-import javax.validation.Valid;
 
 import dev.spring.petclinic.domain.owner.domain.Owner;
 import dev.spring.petclinic.domain.owner.dto.CustomPageResponse;
@@ -33,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "Owner API", description = "Owner 관련 API") // API 그룹 이름
 public class OwnerController {
 	private final OwnerService ownerService;
-	/*
+
 
 	@Operation(summary = "Owner 목록 조회", description = "검색값이 있으면 필터링하고, 없으면 전체 Owner 목록을 반환합니다.")
 	@GetMapping
@@ -46,23 +38,15 @@ public class OwnerController {
 		int pageIndex = Math.max(page - 1, 0);
 
 		// lastName이 없으면 전체 조회, 있으면 필터링하여 조회
+
 		Page<OwnerResDto> owners = (lastName == null || lastName.isBlank())
-			? ownerService.findPaginatedAllOwners(pageIndex, size)  // 전체 조회
-			: ownerService.findPaginatedByLastName(lastName, pageIndex, size); // 검색
+			? ownerService.findPaginatedAllOwners(page, size)  // 전체 조회
+			: ownerService.findPaginatedByLastName(lastName, page, size); // 검색
 
-		// 요청한 JSON 구조에 맞게 변환
-		CustomPageResponse<OwnerResDto> response = new CustomPageResponse<>(
-			owners,
-			page,  // `1`부터 시작하는 페이지로 변환
-			size,
-			owners.getTotalPages(),
-			owners.getTotalElements()
-		);
-
-		return ResponseEntity.ok(response);
+		// CustomPageResponse.fromPage()를 사용하여 변환
+		return ResponseEntity.ok(CustomPageResponse.fromPage(owners));
 	}
 
-	 */
 
 	@Operation(summary = "특정 Owner 조회", description = "Owner ID를 입력받아 Owner 정보를 반환합니다.")
 	@GetMapping("/{id}")
