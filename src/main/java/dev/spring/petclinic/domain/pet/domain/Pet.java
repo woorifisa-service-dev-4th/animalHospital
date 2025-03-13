@@ -2,6 +2,7 @@ package dev.spring.petclinic.domain.pet.domain;
 
 
 import dev.spring.petclinic.domain.owner.domain.Owner;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -37,6 +38,7 @@ public class Pet {
 	private LocalDate birthDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@Schema(description = "Pet 종류 (예: dog, bird)", example = "bird")
 	@JoinColumn(name = "type_id", nullable = false)
 	private PetType type;
 
