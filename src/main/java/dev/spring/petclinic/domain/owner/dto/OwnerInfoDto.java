@@ -1,7 +1,5 @@
 package dev.spring.petclinic.domain.owner.dto;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,55 +1,51 @@
 package dev.spring.petclinic.domain.owner.domain;
 
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Index;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
-
-import dev.spring.petclinic.domain.pet.domain.Pet;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-@Entity // 어노테이션이 붙은 클래스는 JPA가 관리하며, 해당 클래스의 인스턴스는 DB의 레코드(행, row)와 연결됨.
-@Table(name = "owners", indexes = {
-	@Index(name = "idx_last_name", columnList = "last_name") //  last_name에 대한 인덱스
-})
-@Getter //클래스의 모든 필드에 대한 Getter 메서드를 자동 생성하는 Lombok 어노테이션.
-@NoArgsConstructor //기본 생성자(파라미터가 없는 생성자)를 자동으로 생성하는 Lombok 어노테이션.
-public class Owner {
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import java.util.List;
 
+import dev.spring.petclinic.domain.pet.domain.Pet;
+
+@Entity
+@Table(name = "owners", indexes = {
+	@Index(name = "idx_last_name", columnList = "last_name")
+})
+@Getter
+@NoArgsConstructor
+@Schema(description = "반려동물 주인(Owner) 정보")
+public class Owner {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Schema(description = "소유자 ID", example = "1") //Swagger에서 API 응답 예시를 제공하기 위한 설명
 	private Long id;
 
 	@Column(name = "first_name", length = 30)
+	@Schema(description = "소유자의 이름", example = "John")
 	private String firstName;
 
 	@Column(name = "last_name", length = 30)
+	@Schema(description = "소유자의 성", example = "Doe")
 	private String lastName;
 
 	@Column(length = 255)
+	@Schema(description = "주소", example = "123 Main St")
 	private String address;
 
 	@Column(length = 80)
+	@Schema(description = "도시", example = "New York")
 	private String city;
 
 	@Column(length = 20)
+	@Schema(description = "전화번호", example = "123-456-7890")
 	private String telephone;
 
 	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@Schema(description = "반려동물 목록")
 	private List<Pet> pets;
-
-
 
 	@Builder
 	public Owner(String firstName, String lastName, String address, String city, String telephone) {
@@ -60,8 +56,6 @@ public class Owner {
 		this.telephone = telephone;
 	}
 
-
-	// setter 메서드를 사용하지 않고, 도메인 로직(Owner 엔티티)에서 변경 가능하도록 메서드를 추가
 	public void updateOwnerInfo(String firstName, String lastName, String address, String city, String telephone) {
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -69,6 +63,4 @@ public class Owner {
 		this.city = city;
 		this.telephone = telephone;
 	}
-
 }
-

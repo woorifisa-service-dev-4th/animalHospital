@@ -49,14 +49,5 @@ public class OwnerResDto {
 			.build();
 	}
 
-	public static PetDto from(Pet pet) {
-		return PetDto.builder()
-			.id(pet.getId())
-			.name(pet.getName())
-			.type(pet.getType().getName())
-			.birthDate(pet.getBirthDate())
-			.build();
-	}
-
 
 }
